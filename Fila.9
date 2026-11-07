@@ -1,0 +1,116 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 5
+
+typedef struct {
+    int itens[MAX];
+    int inicio;
+    int fim;
+} FilaReutilizavel;
+
+void iniciarFila(FilaReutilizavel *f) {
+    f->inicio = 0;
+    f->fim = 0;
+}
+
+void enfileirar(FilaReutilizavel *f, int valor) {
+    // A condição de fila cheia agora verifica se o número de elementos (fim - inicio) alcançou MAX
+    // Como inicio é sempre mantido em 0 nas remoções, fim indicará diretamente a quantidade exata.
+    if (f->fim == MAX) {
+        printf("\n[ERRO] A fila esta cheia! Capacidade maxima de %d elementos atingida.\n", MAX);
+    } else {
+        f->itens[f->fim] = valor;
+        f->fim++;
+        printf("\n[SUCESSO] %d entrou no final da fila!\n", valor);
+    }
+}
+
+void desenfileirar(FilaReutilizavel *f) {
+    if (f->inicio == f->fim) {
+        printf("\n[ERRO] A fila esta vazia!\n");
+    } else {
+        printf("\n[SUCESSO] %d foi atendido e removido da fila!\n", f->itens[f->inicio]);
+        
+        // Desloca todos os elementos restantes uma posição para a esquerda
+        for (int i = 0; i < f->fim - 1; i++) {
+            f->itens[i] = f->itens[i + 1];
+        }
+        
+        // Ajusta os ponteiros mantendo estritamente inicio igual a 0
+        f->fim--;
+        f->inicio = 0; 
+    }
+}
+
+void mostrarFila(FilaReutilizavel *f) {
+    if (f->inicio == f->fim) {
+        printf("\nA fila esta vazia.\n");
+    } else {
+        printf("\n--- ESTADO ATUAL DA FILA (Reutilizacao de posicoes) ---\n");
+        printf("Inicio -> ");
+        for (int i = f->inicio; i < f->fim; i++) {
+            printf("[%d] ", f->itens[i]);
+        }
+        printf("<- Fim\n");
+    }
+}
+
+int main() {
+    FilaReutilizavel fila;
+    iniciarFila(&fila);
+    int opcao, valor;
+
+    // Teste obrigatório solicitado no enunciado:
+    printf("=== EXECUTANDO TESTE OBRIGATORIO ===\n");
+    printf("1. Inserindo 5 valores (10, 20, 30, 40, 50):\n");
+    enfileirar(&fila, 10);
+    enfileirar(&fila, 20);
+    enfileirar(&fila, 30);
+    enfileirar(&fila, 40);
+    enfileirar(&fila, 50);
+    
+    printf("\n2. Removendo dois elementos:\n");
+    desenfileirar(&fila); // Remove 10
+    desenfileirar(&fila); // Remove 20
+    mostrarFila(&fila); // Deve mostrar 30, 40, 50
+    
+    printf("\n3. Inserindo outros dois valores (60 e 70) em posicoes liberadas:\n");
+    enfileirar(&fila, 60);
+    enfileirar(&fila, 70);
+    
+    printf("\nEstado final apos teste obrigatorio (ordem FIFO preservada):\n");
+    mostrarFila(&fila); // Deve mostrar 30, 40, 50, 60, 70
+    printf("======================================\n\n");
+
+    do {
+        printf("\n=== MENU FILA COM REUTILIZACAO ===\n");
+        printf("1. Enfileirar\n");
+        printf("2. Desenfileirar\n");
+        printf("3. Mostrar Fila\n");
+        printf("0. Sair\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                printf("Digite o valor para enfileirar: ");
+                scanf("%d", &valor);
+                enfileirar(&fila, valor);
+                break;
+            case 2:
+                desenfileirar(&fila);
+                break;
+            case 3:
+                mostrarFila(&fila);
+                break;
+            case 0:
+                printf("Saindo...\n");
+                break;
+            default:
+                printf("Opcao invalida!\n");
+        }
+    } while (opcao != 0);
+
+    return 0;
+}
