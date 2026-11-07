@@ -1,0 +1,132 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 5
+
+typedef struct {
+    int itens[MAX];
+    int inicio;
+    int fim;
+} FilaRodizio;
+
+void iniciarFila(FilaRodizio *f) {
+    f->inicio = 0;
+    f->fim = 0;
+}
+
+void enfileirar(FilaRodizio *f, int valor) {
+    if (f->fim == MAX) {
+        printf("\n[ERRO] Fila cheia! Nao e possivel reinserir a tarefa.\n");
+    } else {
+        f->itens[f->fim] = valor;
+        f->fim++;
+    }
+}
+
+// Função de remoção adaptada que retira a primeira tarefa e retorna seu identificador para uso externo
+int desenfileirarRetornando(FilaRodizio *f) {
+    if (f->inicio == f->fim) {
+        return -1; // Fila vazia
+    } else {
+        int tarefaRetirada = f->itens[f->inicio];
+        
+        // Deslocamento à esquerda para reaproveitamento de posições
+        for (int i = 0; i < f->fim - 1; i++) {
+            f->itens[i] = f->itens[i + 1];
+        }
+        f->fim--;
+        f->inicio = 0;
+        
+        return tarefaRetirada;
+    }
+}
+
+void mostrarFila(FilaRodizio *f) {
+    if (f->inicio == f->fim) {
+        printf("\nA fila de tarefas esta vazia.\n");
+    } else {
+        printf("\n--- ESTADO ATUAL DA FILA DE TAREFAS ---\n");
+        printf("Inicio -> ");
+        for (int i = f->inicio; i < f->fim; i++) {
+            printf("[%d] ", f->itens[i]);
+        }
+        printf("<- Fim\n");
+    }
+}
+
+// Opção de rodízio solicitada no enunciado
+void executarRodada(FilaRodizio *f) {
+    if (f->inicio == f->fim) {
+        printf("\n[RODIZIO] Nenhuma tarefa pendente para executar.\n");
+        return;
+    }
+
+    // Retira a primeira tarefa da fila
+    int tarefaAtual = desenfileirarRetornando(f);
+    printf("\n----------------------------------------\n");
+    printf("[RODIZIO] Executando tarefa de identificador: %d\n", tarefaAtual);
+
+    int resposta;
+    printf("A tarefa %d foi concluida? (1 para Sim / 0 para Nao): ", tarefaAtual);
+    scanf("%d", &resposta);
+
+    if (resposta == 1) {
+        printf("[RODIZIO] Tarefa %d concluida com sucesso e removida definitivamente da fila.\n", tarefaAtual);
+    } else {
+        // Se não foi concluída, coloca-la novamente no final da fila
+        // Nota: Como a remoção anterior abriu espaço (deslocamento), a reinserção é garantida mesmo se a fila estava cheia.
+        enfileirar(f, tarefaAtual);
+        printf("[RODIZIO] Tarefa %d nao foi concluida e retornou para o final da fila.\n", tarefaAtual);
+    }
+    printf("----------------------------------------\n");
+}
+
+int main() {
+    FilaRodizio fila;
+    iniciarFila(&fila);
+    int opcao, valor;
+
+    // Teste interativo / simulação com o exemplo (1, 2, 3)
+    printf("=== PREPARANDO TESTE COM O EXEMPLO (1, 2, 3) ===\n");
+    enfileirar(&fila, 1);
+    enfileirar(&fila, 2);
+    enfileirar(&fila, 3);
+    mostrarFila(&fila);
+    printf("================================================\n\n");
+
+    do {
+        printf("\n=== MENU RODIZIO DE TAREFAS ===\n");
+        printf("1. Adicionar nova tarefa\n");
+        printf("2. Executar uma rodada de tarefas\n");
+        printf("3. Mostrar Fila de Tarefas\n");
+        printf("0. Sair\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                if (fila.fim == MAX) {
+                    printf("\n[ERRO] Fila de tarefas cheia!\n");
+                } else {
+                    printf("Digite o identificador da tarefa (inteiro): ");
+                    scanf("%d", &valor);
+                    enfileirar(&fila, valor);
+                    printf("[SUCESSO] Tarefa %d adicionada.\n", valor);
+                }
+                break;
+            case 2:
+                executarRodada(&fila);
+                break;
+            case 3:
+                mostrarFila(&fila);
+                break;
+            case 0:
+                printf("Saindo do simulador de rodizio...\n");
+                break;
+            default:
+                printf("Opcao invalida!\n");
+        }
+    } while (opcao != 0);
+
+    return 0;
+}
