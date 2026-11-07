@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100 // Capacidade ampliada para acomodar sequências maiores
+
+typedef struct {
+    int itens[MAX];
+    int topo;
+} Pilha;
+
+void iniciarPilha(Pilha *p) {
+    p->topo = -1;
+}
+
+void empilhar(Pilha *p, int valor) {
+    if (p->topo == MAX - 1) {
+        printf("\n[ERRO] A pilha esta cheia!\n");
+    } else {
+        p->topo++;
+        p->itens[p->topo] = valor;
+    }
+}
+
+// Função de remoção adaptada para retornar o valor retirado, permitindo uso externo
+int desempilharRetornando(Pilha *p) {
+    if (p->topo == -1) {
+        printf("\n[ERRO] A pilha esta vazia!\n");
+        return -1; // Valor de erro sentinela
+    } else {
+        int valorRetirado = p->itens[p->topo];
+        p->topo--;
+        return valorRetirado;
+    }
+}
+
+int main() {
+    Pilha pilha;
+    iniciarPilha(&pilha);
+    int n, valor;
+
+    printf("Digite a quantidade de numeros (entre 1 e %d): ", MAX);
+    scanf("%d", &n);
+
+    if (n < 1 || n > MAX) {
+        printf("[ERRO] Quantidade invalida! Deve estar entre 1 e %d.\n", MAX);
+        return 1;
+    }
+
+    printf("Digite os %d numeros inteiros:\n", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &valor);
+        empilhar(&pilha, valor);
+    }
+
+    printf("\nSequencia invertida (ordem de retirada da pilha):\n");
+    while (pilha.topo != -1) {
+        int invertido = desempilharRetornando(&pilha);
+        printf("%d ", invertido);
+    }
+    printf("\n");
+
+    // Verifica se a pilha ficou vazia ao final
+    if (pilha.topo == -1) {
+        printf("[INFO] Operacao concluida com sucesso. A pilha esta vazia.\n");
+    }
+
+    return 0;
+}
