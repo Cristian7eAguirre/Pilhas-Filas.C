@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 64 // MAX ajustado para suportar números binários longos (64 bits)
+
+typedef struct {
+    int itens[MAX];
+    int topo;
+} PilhaBinaria;
+
+void iniciarPilha(PilhaBinaria *p) {
+    p->topo = -1;
+}
+
+void empilhar(PilhaBinaria *p, int valor) {
+    if (p->topo == MAX - 1) {
+        printf("\n[ERRO] Capacidade da pilha excedida para conversao binaria!\n");
+    } else {
+        p->topo++;
+        p->itens[p->topo] = valor;
+    }
+}
+
+int desempilhar(PilhaBinaria *p) {
+    if (p->topo == -1) {
+        return -1;
+    } else {
+        int val = p->itens[p->topo];
+        p->topo--;
+        return val;
+    }
+}
+
+int main() {
+    PilhaBinaria pilha;
+    iniciarPilha(&pilha);
+    long long decimal, temp;
+
+    printf("Digite um numero inteiro nao negativo para converter em binario: ");
+    scanf("%lld", &decimal);
+
+    // Tratamento de entradas negativas
+    if (decimal < 0) {
+        printf("[ERRO] Entradas negativas sao rejeitadas!\n");
+        return 1;
+    }
+
+    // Tratamento especial para o número 0
+    if (decimal == 0) {
+        printf("Representacao binaria: 0\n");
+        return 0;
+    }
+
+    temp = decimal;
+
+    // Divisões sucessivas por 2 e empilhamento dos restos (utilizando apenas um while correto)
+    while (temp > 0) {
+        int resto = temp % 2;
+        empilhar(&pilha, resto);
+        temp /= 2;
+    }
+
+    printf("Representacao binaria de %lld: ", decimal);
+    while (pilha.topo != -1) {
+        printf("%d", desempilhar(&pilha));
+    }
+    printf("\n");
+
+    return 0;
+}
