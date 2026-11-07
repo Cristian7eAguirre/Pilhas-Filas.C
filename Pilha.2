@@ -1,0 +1,106 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 5 // Capacidade máxima de 5 bandejas
+
+typedef struct {
+    int itens[MAX];
+    int topo;
+} PilhaBandejas;
+
+void iniciarPilha(PilhaBandejas *p) {
+    p->topo = -1;
+}
+
+void adicionarBandeja(PilhaBandejas *p, int idBandeja) {
+    if (p->topo == MAX - 1) {
+        printf("\n[LIVEDO] Pilha de bandejas cheia! Nao e possivel adicionar mais bandejas.\n");
+    } else {
+        p->topo++;
+        p->itens[p->topo] = idBandeja;
+        printf("\n[LIVEDO] Bandeja %d adicionada ao topo da pilha.\n", idBandeja);
+    }
+}
+
+void retirarBandeja(PilhaBandejas *p) {
+    if (p->topo == -1) {
+        printf("\n[ALERTA] A pilha de bandejas esta vazia! Nenhuma bandeja para retirar.\n");
+    } else {
+        int retirada = p->itens[p->topo];
+        p->topo--;
+        printf("\n[LIVEDO] Bandeja %d retirada do topo para uso.\n", retirada);
+    }
+}
+
+void consultarProximaBandeja(PilhaBandejas *p) {
+    if (p->topo == -1) {
+        printf("\n[LIVEDO] Nenhuma bandeja disponivel na pilha.\n");
+    } else {
+        printf("\n[CONSULTA] A proxima bandeja disponivel no topo e a de ID: %d\n", p->itens[p->topo]);
+    }
+}
+
+void mostrarBandejas(PilhaBandejas *p) {
+    if (p->topo == -1) {
+        printf("\n[LIVEDO] A pilha de bandejas esta completamente vazia.\n");
+    } else {
+        printf("\n--- PILHA DE BANDEJAS (Do Topo a Base) ---\n");
+        for (int i = p->topo; i >= 0; i--) {
+            printf("| Bandeja ID: %3d |\n", p->itens[i]);
+        }
+        printf("------------------------------------\n");
+    }
+}
+
+int main() {
+    PilhaBandejas pilha;
+    iniciarPilha(&pilha);
+    int opcao, id;
+
+    // Executando o teste obrigatório automaticamente na inicialização ou via menu
+    printf("=== EXECUTANDO TESTE OBRIGATORIO ===\n");
+    adicionarBandeja(&pilha, 101);
+    adicionarBandeja(&pilha, 102);
+    adicionarBandeja(&pilha, 103);
+    printf("\nRealizando 2 retiradas:\n");
+    retirarBandeja(&pilha); // Retira 103
+    retirarBandeja(&pilha); // Retira 102
+    printf("\nEstado final apos teste obrigatorio:\n");
+    mostrarBandejas(&pilha); // Deve permanecer apenas a bandeja 101
+    printf("======================================\n\n");
+
+    do {
+        printf("\n=== MENU PILHA DE BANDEJAS ===\n");
+        printf("1. Adicionar Bandeja\n");
+        printf("2. Retirar Bandeja do Topo\n");
+        printf("3. Consultar Proxima Bandeja\n");
+        printf("4. Mostrar Bandejas (Topo ate Base)\n");
+        printf("0. Sair\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                printf("Digite o numero de identificacao da bandeja: ");
+                scanf("%d", &id);
+                adicionarBandeja(&pilha, id);
+                break;
+            case 2:
+                retirarBandeja(&pilha);
+                break;
+            case 3:
+                consultarProximaBandeja(&pilha);
+                break;
+            case 4:
+                mostrarBandejas(&pilha);
+                break;
+            case 0:
+                printf("Saindo do sistema de bandejas...\n");
+                break;
+            default:
+                printf("Opcao invalida!\n");
+        }
+    } while (opcao != 0);
+
+    return 0;
+}
