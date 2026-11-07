@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 5
+
+typedef struct {
+    int itens[MAX];
+    int inicio;
+    int fim;
+} FilaImpressao;
+
+void iniciarFila(FilaImpressao *f) {
+    f->inicio = 0;
+    f->fim = 0;
+}
+
+void adicionarTrabalho(FilaImpressao *f, int idTrabalho) {
+    if (f->fim == MAX) {
+        printf("\n[IMPRESSORA - ERRO] Fila de impressao cheia!\n");
+    } else {
+        f->itens[f->fim] = idTrabalho;
+        f->fim++;
+        printf("\n[IMPRESSORA] Trabalho de ID %d adicionado à fila.\n", idTrabalho);
+    }
+}
+
+void imprimirProximo(FilaImpressao *f) {
+    if (f->inicio == f->fim) {
+        printf("\n[IMPRESSORA] Nenhum trabalho pendente para impressao.\n");
+    } else {
+        printf("\n[IMPRESSORA] Imprimindo e removendo o trabalho: ID %d\n", f->itens[f->inicio]);
+        f->inicio++;
+    }
+}
+
+void listarPendentes(FilaImpressao *f) {
+    if (f->inicio == f->fim) {
+        printf("\n[IMPRESSORA] Fila de impressao vazia.\n");
+    } else {
+        printf("\n--- TRABALHOS PENDENTES NA FILA ---\n");
+        printf("Inicio -> ");
+        for (int i = f->inicio; i < f->fim; i++) {
+            printf("[Trabalho %d] ", f->itens[i]);
+        }
+        printf("<- Fim\n");
+    }
+}
+
+// Opção para imprimir todos: processa e remove cada trabalho um a um rigorosamente
+void imprimirTodos(FilaImpressao *f) {
+    if (f->inicio == f->fim) {
+        printf("\n[IMPRESSORA] Nao ha trabalhos para imprimir. Fila vazia.\n");
+    } else {
+        printf("\n=== INICIANDO IMPRESSAO DE TODOS OS TRABALHOS PENDENTES ===\n");
+        while (f->inicio != f->fim) {
+            printf("Processando impressao do trabalho ID: %d\n", f->itens[f->inicio]);
+            f->inicio++; // Remove da fila processando um a um
+        }
+        printf("=== TODOS OS TRABALHOS FORAM IMPRESSOS COM SUCESSO ===\n");
+    }
+}
+
+int main() {
+    FilaImpressao fila;
+    iniciarFila(&fila);
+    int opcao, id;
+
+    // Teste com os valores citados no exemplo (45, 12, 78)
+    printf("=== TESTE COM VALORES DO EXEMPLO (45, 12, 78) ===\n");
+    adicionarTrabalho(&fila, 45);
+    adicionarTrabalho(&fila, 12);
+    adicionarTrabalho(&fila, 78);
+    printf("\nExecutando impressao de todos:\n");
+    imprimirTodos(&fila);
+    printf("==================================================\n\n");
+
+    do {
+        printf("\n=== MENU FILA DE IMPRESSAO ===\n");
+        printf("1. Adicionar Trabalho\n");
+        printf("2. Imprimir Proximo\n");
+        printf("3. Listar Pendentes\n");
+        printf("4. Imprimir Todos (Processar lote)\n");
+        printf("0. Sair\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                printf("Digite o identificador do trabalho (inteiro): ");
+                scanf("%d", &id);
+                adicionarTrabalho(&fila, id);
+                break;
+            case 2:
+                imprimirProximo(&fila);
+                break;
+            case 3:
+                listarPendentes(&fila);
+                break;
+            case 4:
+                imprimirTodos(&fila);
+                break;
+            case 0:
+                printf("Saindo do sistema de impressao...\n");
+                break;
+            default:
+                printf("Opcao invalida!\n");
+        }
+    } while (opcao != 0);
+
+    return 0;
+}
